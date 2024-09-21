@@ -41,7 +41,7 @@ export function UsIndustryTree(): Promise<BasicResult> {
 }
 
 export function UsIndustryStock(params: {
-  code: string;
+  code: string[];
 }): Promise<BasicResult> {
   return http.request({
     url: Api.UsIndustryStock,
@@ -51,6 +51,8 @@ export function UsIndustryStock(params: {
 }
 
 export function UsIndustryPrice(params: {
+  start_date: string;
+  end_date: string;
   codes: string[];
 }): Promise<BasicResult> {
   return http.request({
@@ -78,7 +80,7 @@ export function CnIndustryTree(): Promise<BasicResult> {
 }
 
 export function CnIndustryStock(params: {
-  code: string;
+  code: string[];
 }): Promise<BasicResult> {
   return http.request({
     url: Api.CnIndustryStock,

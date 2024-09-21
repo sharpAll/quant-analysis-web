@@ -1,12 +1,21 @@
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
+  <n-config-provider
+    :locale="zhCN"
+    :date-locale="dateZhCN"
+    :theme-overrides="themeOverrides"
+  >
     <n-dialog-provider
       ><n-message-provider><router-view /></n-message-provider
     ></n-dialog-provider>
   </n-config-provider>
 </template>
 <script setup lang="ts">
-import { NConfigProvider, GlobalThemeOverrides } from "naive-ui";
+import {
+  NConfigProvider,
+  GlobalThemeOverrides,
+  zhCN,
+  dateZhCN,
+} from "naive-ui";
 import { lighten } from "/@/utils/common";
 // naive主题模块
 const themeOverrides: GlobalThemeOverrides = {

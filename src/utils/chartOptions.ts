@@ -34,11 +34,13 @@ export const usChartOptions = {
     {
       name: "",
       type: "value",
+      scale: true,
     },
     {
       name: "",
       type: "value",
       position: "right",
+      scale: true,
     },
   ],
   legend: {
@@ -132,11 +134,13 @@ export const cnChartOptions = {
     {
       name: "",
       type: "value",
+      scale: true,
     },
     {
       name: "",
       type: "value",
       position: "right",
+      scale: true,
     },
   ],
   legend: {

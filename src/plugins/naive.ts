@@ -26,6 +26,7 @@ import {
   NTabPane,
   NTree,
   NCard,
+  NDatePicker,
 } from "naive-ui";
 import "vfonts/Lato.css";
 
@@ -56,6 +57,7 @@ const naive = create({
     NTabPane,
     NTree,
     NCard,
+    NDatePicker,
   ],
 });
 

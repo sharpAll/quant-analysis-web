@@ -25,24 +25,34 @@
               />
             </n-tab-pane>
             <n-tab-pane name="charts" tab="行业趋势" display-directive="show">
-              <div class="mb-15px">
-                <n-checkbox-group
-                  v-model:value="stockIndexs"
-                  @update:value="stockIndexsChange"
-                >
-                  <n-space item-style="display: flex;">
-                    <n-checkbox
-                      v-for="item in stockIndexsOptions"
-                      :key="item.value"
-                      :value="item.value"
-                      :label="item.label"
-                    />
-                    <n-checkbox :value="parentIndex.value">{{
-                      parentIndex.label
-                    }}</n-checkbox>
-                  </n-space>
-                </n-checkbox-group>
-              </div>
+              <n-grid class="mb-10px">
+                <n-gi span="12">
+                  <n-checkbox-group
+                    v-model:value="stockIndexs"
+                    @update:value="stockIndexsChange"
+                  >
+                    <n-space item-style="display: flex;">
+                      <n-checkbox
+                        v-for="item in stockIndexsOptions"
+                        :key="item.value"
+                        :value="item.value"
+                        :label="item.label"
+                      />
+                      <n-checkbox :value="parentIndex.value">{{
+                        parentIndex.label
+                      }}</n-checkbox>
+                    </n-space>
+                  </n-checkbox-group>
+                </n-gi>
+                <n-gi span="11">
+                  <n-date-picker
+                    v-model:formatted-value="range"
+                    value-format="yyyy-MM-dd"
+                    type="daterange"
+                    @confirm="handleConfirmRange"
+                  />
+                </n-gi>
+              </n-grid>
               <n-scrollbar style="max-height: calc(100vh - 210px)">
                 <div class="overflow-hidden">
                   <div
@@ -72,6 +82,7 @@ import {
 import * as echarts from "echarts";
 import { usChartOptions } from "/@/utils/chartOptions";
 import { deepCopy } from "/@/utils/common";
+import moment from "moment";
 const industryMenuOptions = ref([]);
 getIndustryMenu();
 async function getIndustryMenu() {
@@ -89,7 +100,18 @@ function traverseTree(data: any[]) {
     }
   }
 }
-const handleUpdateValue = async (key: string, options: any) => {
+const range = ref([
+  moment().subtract(1, "year").format("YYYY-MM-DD"),
+  moment().format("YYYY-MM-DD"),
+]);
+let curKey: string[] = [];
+let curOptions: any = [];
+const handleUpdateValue = async (key: string[], options: any) => {
+  if (key.length === 0) {
+    return;
+  }
+  curKey = key;
+  curOptions = options;
   const res = await UsIndustryStock({ code: key });
   tableData.value = res.data.list;
   const chartsData = options[0];
@@ -99,6 +121,9 @@ const handleUpdateValue = async (key: string, options: any) => {
   } else {
     initCharts(chartsData);
   }
+};
+const handleConfirmRange = () => {
+  handleUpdateValue(curKey, curOptions);
 };
 const tableData = ref([]);
 const columns = ref([
@@ -158,12 +183,20 @@ let parentData: any = [];
 async function initCharts(data: any) {
   parentIndex.value.label = data.name;
   parentIndex.value.value = data.code;
-  const resParent = await UsIndustryPrice({ codes: data.code });
+  const resParent = await UsIndustryPrice({
+    start_date: range.value[0],
+    end_date: range.value[1],
+    codes: data.code,
+  });
   parentData = resParent.data.map((item: any) => {
     return [new Date(item.date).getTime(), item[data.code]];
   });
   const childrenCodes = data.children.map((item: any) => item.code);
-  const res = await UsIndustryPrice({ codes: childrenCodes });
+  const res = await UsIndustryPrice({
+    start_date: range.value[0],
+    end_date: range.value[1],
+    codes: childrenCodes,
+  });
   const chartOptionsData = [];
   for (let i = 0; i < data.children.length; i++) {
     const child = data.children[i];
