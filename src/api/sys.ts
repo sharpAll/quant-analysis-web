@@ -17,6 +17,16 @@ enum Api {
   CnIndustryStock = "/stocks/cn/industry_stock",
   // A股行业指数价格
   CnIndustryPrice = "/stocks/cn/industry_price",
+  // 股票咨询-名称搜索
+  StockWizard = "/stocks/news/wizard",
+  // 股票咨询-股票资讯列表
+  StockNewsList = "/stocks/news/news_list",
+  // 股票咨询-AI资讯综述
+  StockNewsSummarize = "/stocks/news/news_summarize",
+  // 股票咨询-股票评级列表
+  StockRecommendation = "/stocks/news/recommendation",
+  // 股票咨询-AI评级综述
+  StockRecommendationSummarize = "/stocks/news/recommendation_summarize",
 }
 interface LoginParams {
   username: string;
@@ -98,6 +108,59 @@ export function CnIndustryPrice(params: {
 }): Promise<BasicResult> {
   return http.request({
     url: Api.CnIndustryPrice,
+    method: "POST",
+    data: params,
+  });
+}
+
+export function StockWizard(params: { key: string }): Promise<BasicResult> {
+  return http.request({
+    url: Api.StockWizard,
+    method: "POST",
+    data: params,
+  });
+}
+
+export function StockNewsList(params: {
+  code: string;
+  sources: string[];
+  page_index: Number;
+  page_size: Number;
+}): Promise<BasicResult> {
+  return http.request({
+    url: Api.StockNewsList,
+    method: "POST",
+    data: params,
+  });
+}
+
+export function StockNewsSummarize(params: {
+  code: string;
+}): Promise<BasicResult> {
+  return http.request({
+    url: Api.StockNewsSummarize,
+    method: "POST",
+    data: params,
+  });
+}
+
+export function StockRecommendation(params: {
+  code: string;
+  page_index: Number;
+  page_size: Number;
+}): Promise<BasicResult> {
+  return http.request({
+    url: Api.StockRecommendation,
+    method: "POST",
+    data: params,
+  });
+}
+
+export function StockRecommendationSummarize(params: {
+  code: string;
+}): Promise<BasicResult> {
+  return http.request({
+    url: Api.StockRecommendationSummarize,
     method: "POST",
     data: params,
   });

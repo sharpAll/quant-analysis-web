@@ -10,7 +10,7 @@ const { message, dialog } = createDiscreteApi(["message", "dialog"]);
  */
 const http = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
-  timeout: 5000,
+  timeout: 120000,
 });
 
 // http.interceptors.request.use(

@@ -27,6 +27,10 @@ import {
   NTree,
   NCard,
   NDatePicker,
+  NAutoComplete,
+  NRadioGroup,
+  NRadioButton,
+  NSpin,
 } from "naive-ui";
 import "vfonts/Lato.css";
 
@@ -58,6 +62,10 @@ const naive = create({
     NTree,
     NCard,
     NDatePicker,
+    NAutoComplete,
+    NRadioGroup,
+    NRadioButton,
+    NSpin,
   ],
 });
 

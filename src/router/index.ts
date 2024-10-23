@@ -9,6 +9,8 @@ import Login from "/@/views/login/index.vue";
 import Redirect from "/@/views/redirect/index.vue";
 import StockCn from "/@/views/stockcn/index.vue";
 import StockUs from "/@/views/stockus/index.vue";
+import Information from "/@/views/information/index.vue";
+import Rating from "/@/views/rating/index.vue";
 
 export const RedirectRoute = {
   path: "/redirect",
@@ -72,6 +74,22 @@ const routes = [
           title: "美 股",
         },
         component: StockUs,
+      },
+      {
+        path: "/information",
+        name: "Information",
+        meta: {
+          title: "资 讯",
+        },
+        component: Information,
+      },
+      {
+        path: "/rating",
+        name: "Rating",
+        meta: {
+          title: "评 级",
+        },
+        component: Rating,
       },
     ],
   },

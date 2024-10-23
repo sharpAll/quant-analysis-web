@@ -5,6 +5,8 @@
       <li class="menu-item" @click="go('/home')">首页</li>
       <li class="menu-item" @click="go('/stock/cn')">A 股</li>
       <li class="menu-item" @click="go('/stock/us')">美 股</li>
+      <li class="menu-item" @click="go('/information')">资 讯</li>
+      <li class="menu-item" @click="go('/rating')">评 级</li>
     </ul>
   </div>
   <TabsView />
