@@ -27,16 +27,20 @@
     <n-grid class="px-3">
       <n-gi :span="18">
         <n-data-table
+          remote
           :columns="columns"
           :data="tableData"
           :bordered="false"
-          :max-height="'calc(100vh - 220px)'"
+          :max-height="'calc(100vh - 270px)'"
+          :loading="tableLoading"
+          :pagination="pagination"
+          @update:page="handlePageChange"
         />
       </n-gi>
       <n-gi :span="6">
         <n-card :title="'AI资讯综述'" size="small">
           <n-spin :show="loading">
-            <n-scrollbar style="height: calc(100vh - 290px)">
+            <n-scrollbar style="height: calc(100vh - 240px)">
               <div style="white-space: pre-line" v-html="AIcontent"></div>
             </n-scrollbar>
           </n-spin>
@@ -46,7 +50,7 @@
   </div>
 </template>
 <script setup lang="ts" name="Information">
-import { ref, h } from "vue";
+import { ref, h, reactive } from "vue";
 import { SelectOption, NTag, NButton } from "naive-ui";
 import { StockWizard, StockNewsList, StockNewsSummarize } from "/@/api/sys";
 const codeLabelValue = ref(null);
@@ -73,20 +77,38 @@ const codeChange = async (value: string) => {
     };
   });
 };
+async function getTableList() {
+  tableLoading.value = true;
+  const res = await StockNewsList({
+    code: curCode.value as string,
+    sources: source.value,
+    page_index: pagination.page,
+    page_size: pagination.pageSize,
+  });
+  tableLoading.value = false;
+  tableData.value = res.data.list;
+  pagination.pageCount = res.data.total_pages;
+  pagination.itemCount = res.data.total_rows;
+}
 const codeDataInit = async (value: string) => {
   curCode.value = value;
-  const res = await StockNewsList({
-    code: value,
-    sources: source.value,
-    page_index: 1,
-    page_size: 20,
-  });
-  tableData.value = res.data.list;
+  getTableList();
   loading.value = true;
   const resSummarize = await StockNewsSummarize({ code: value });
   AIcontent.value = resSummarize.data.content;
   loading.value = false;
 };
+const tableLoading = ref(false);
+const pagination = reactive({
+  page: 1,
+  pageCount: 1,
+  pageSize: 20,
+  itemCount: 0,
+});
+async function handlePageChange(currentPage: number) {
+  pagination.page = currentPage;
+  getTableList();
+}
 const source = ref(["futu", "laohu8"]);
 const columns = ref([
   {
@@ -124,13 +146,7 @@ const AIcontent = ref("");
 const loading = ref(false);
 const sourceChange = async () => {
   if (codeLabelValue.value !== null) {
-    const res = await StockNewsList({
-      code: curCode.value as string,
-      sources: source.value,
-      page_index: 1,
-      page_size: 20,
-    });
-    tableData.value = res.data.list;
+    getTableList();
   }
 };
 </script>

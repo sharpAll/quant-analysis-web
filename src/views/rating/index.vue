@@ -17,10 +17,14 @@
     <n-grid class="px-3">
       <n-gi :span="18">
         <n-data-table
+          remote
           :columns="columns"
           :data="tableData"
           :bordered="false"
-          :max-height="'calc(100vh - 220px)'"
+          :max-height="'calc(100vh - 270px)'"
+          :loading="tableLoading"
+          :pagination="pagination"
+          @update:page="handlePageChange"
         />
       </n-gi>
       <n-gi :span="6">
@@ -36,7 +40,7 @@
   </div>
 </template>
 <script setup lang="ts" name="Rating">
-import { ref, h } from "vue";
+import { ref, h, reactive } from "vue";
 import { SelectOption, NTag, NButton } from "naive-ui";
 import {
   StockWizard,
@@ -44,6 +48,7 @@ import {
   StockRecommendationSummarize,
 } from "/@/api/sys";
 const codeLabelValue = ref(null);
+const curCode = ref<string | null>(null);
 const codeOptions = ref<any[]>([]);
 const renderCodeLabel = (option: SelectOption) => [
   option.label as string,
@@ -66,18 +71,37 @@ const codeChange = async (value: string) => {
     };
   });
 };
-const codeDataInit = async (value: string) => {
+async function getTableList() {
+  tableLoading.value = true;
   const res = await StockRecommendation({
-    code: value,
-    page_index: 1,
-    page_size: 20,
+    code: curCode.value as string,
+    page_index: pagination.page,
+    page_size: pagination.pageSize,
   });
+  tableLoading.value = false;
   tableData.value = res.data.list;
+  pagination.pageCount = res.data.total_pages;
+  pagination.itemCount = res.data.total_rows;
+}
+const codeDataInit = async (value: string) => {
+  curCode.value = value;
+  getTableList();
   loading.value = true;
   const resSummarize = await StockRecommendationSummarize({ code: value });
   AIcontent.value = resSummarize.data.content;
   loading.value = false;
 };
+const tableLoading = ref(false);
+const pagination = reactive({
+  page: 1,
+  pageCount: 1,
+  pageSize: 20,
+  itemCount: 0,
+});
+async function handlePageChange(currentPage: number) {
+  pagination.page = currentPage;
+  getTableList();
+}
 const columns = ref([
   {
     title: "标题",
